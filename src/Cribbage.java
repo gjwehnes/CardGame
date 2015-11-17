@@ -31,7 +31,7 @@ public class Cribbage extends JFrame {
 	//-add ability to add cards in order within group (create drop method in group class)
 	//-restrict cards from re-arranging in group
 	//-add deck
-	//-add events / events listener, separate logic / gui
+	//-add events / events listener, separate logic / GUI
 	
 	private CardTable cardTable;
 	private CardTableEventAdapter cte;

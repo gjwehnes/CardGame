@@ -87,6 +87,7 @@ public class Cribbage extends JFrame {
 		handGroup.setBackground(Color.GREEN);
 		handGroup.setBounds(10, 152, 314, 110);
 		cardTable.add(handGroup);
+		handGroup.setLayout(null);
 
 		cribGroup = new CardGroup();
 		cribGroup.setBorder(new LineBorder(Color.BLUE, 2));
@@ -135,12 +136,21 @@ public class Cribbage extends JFrame {
 	}
 
 	private void handleCardAddedToTableLocal(CardTable table, Card card){
+		card.setCanFlip(true);
 		setControls();
 	}
 	
 	private void handleCardAddedToGroupLocal(CardGroup group, Card card){		
 		card.setCanFlip(false);
-		setControls();
+		
+		for (Component component : group.getComponents()) {
+			if (component instanceof Card){
+				int order = group.getComponentZOrder(component);						
+				component.setLocation(order * 20, 0);
+			}
+		}
+		
+		setControls();		
 	}
 	
 	private void handleCardFlippedLocal(Container source, Card card){

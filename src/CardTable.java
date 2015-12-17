@@ -194,7 +194,7 @@ public class CardTable extends JPanel {
 		    System.out.println("double clicked" + card.getName());
 			card = (Card)arg0.getSource();
 			card.flip();
-			fireCardFlippedEvent(card);
+			fireCardFlippedEvent(card.getParent(), card);
 		  }				
 	}
 
@@ -238,22 +238,59 @@ public class CardTable extends JPanel {
 	}
 
 	private synchronized void fireCardAddedToGroupEvent(CardGroup group, Card card) {
+
+		//first allow all other listeners to respond to event
 		for (CardTableEventsListener l : listeners){
 			l.handleCardAddedToGroupEvent(group, card);
 		}
+		
+		//allow CardTable to respond to event
+		this.handleCardAddedToGroupLocal(group, card);
+		
+		//allow CardGroup to respond to event
+		group.handleCardAddedToGroupLocal(group, card);
+
 	}
 	
 	private synchronized void fireCardAddedToTableEvent(CardTable table, Card card) {
+
+		//first allow all other listeners to respond to event		
 		for (CardTableEventsListener l : listeners){
 			l.handleCardAddedToTableEvent(table, card);
 		}
+
+		//allow CardTable to respond to event
+		this.handleCardAddedToTableLocal(table, card);
+		
 	}
 	
-	private synchronized void fireCardFlippedEvent(Card card) {
+	private synchronized void fireCardFlippedEvent(Container source, Card card) {
+
+		//first allow all other listeners to respond to event				
 		for (CardTableEventsListener l : listeners){
-			l.handleCardFlippedEvent(this, card);
+			l.handleCardFlippedEvent(source, card);
 		}
+		
+		//allow CardTable to respond to event
+		this.handleCardFlippedLocal(source, card);
+		
+		//allow CardGroup to respond to event
+		if (source instanceof CardGroup){
+			((CardGroup)source).handleCardFlippedLocal(source, card);
+		}
+		
+	}
+	
+	//CardTable event handlers here
+	private void handleCardAddedToGroupLocal(CardGroup group, Card card){		
 	}
 
+	private void handleCardAddedToTableLocal(CardTable table, Card card){
+	}
+
+	private void handleCardFlippedLocal(Container source, Card card){		
+	}
+
+	
 }
 

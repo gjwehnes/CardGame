@@ -1,6 +1,7 @@
 
 
 import java.awt.Component;
+import java.awt.Container;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -82,6 +83,29 @@ public class CardGroup extends JPanel  {
 		for (Component component : this.getComponents()) {
 			if (component instanceof Card){
 				this.remove(component);
+			}
+		}		
+	}
+	
+	//CardGroup event handlers
+	protected void handleCardAddedToGroupLocal(CardGroup group, Card card){
+		reOrder();
+	}
+
+	protected void handleCardFlippedLocal(Container source, Card card){
+		reOrder();
+	}
+
+	protected void reOrder(){
+		int hSpace = this.gethSpace();
+		int vSpace = this.getvSpace();
+		int hBorder = this.gethBorder();
+		int vBorder = this.getvBorder();
+		
+		for (Component component : this.getComponents()) {
+			if (component instanceof Card){
+				int order = this.getComponentZOrder(component);						
+				component.setLocation(hBorder + (order * hSpace), vBorder + (order * vSpace));
 			}
 		}		
 	}

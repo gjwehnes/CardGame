@@ -84,10 +84,10 @@ public class Cribbage extends JFrame {
 		
 		
 		handGroup = new CardGroup(96,0);
-		handGroup.setvSpace(4);
+		handGroup.setvSpace(0);
 		handGroup.sethBorder(4);
 		handGroup.setvBorder(4);
-		handGroup.sethSpace(80);
+		handGroup.sethSpace(76);
 		handGroup.setBorder(new LineBorder(Color.RED, 2));
 		handGroup.setForeground(Color.GREEN);
 		handGroup.setBackground(Color.GREEN);
@@ -96,10 +96,10 @@ public class Cribbage extends JFrame {
 		handGroup.setLayout(null);
 
 		cribGroup = new CardGroup(96,0);
-		cribGroup.sethSpace(0);
+		cribGroup.setvSpace(0);
 		cribGroup.sethBorder(4);
-		cribGroup.setvSpace(16);
 		cribGroup.setvBorder(4);
+		cribGroup.sethSpace(76);
 		cribGroup.setBorder(new LineBorder(Color.BLUE, 2));
 		cribGroup.setForeground(Color.GREEN);
 		cribGroup.setBackground(Color.GREEN);
@@ -152,21 +152,7 @@ public class Cribbage extends JFrame {
 	}
 	
 	private void handleCardAddedToGroupLocal(CardGroup group, Card card){		
-
-		card.setCanFlip(false);
-		
-		int hSpace = group.gethSpace();
-		int vSpace = group.getvSpace();
-		int hBorder = group.gethBorder();
-		int vBorder = group.getvBorder();
-		
-		for (Component component : group.getComponents()) {
-			if (component instanceof Card){
-				int order = group.getComponentZOrder(component);						
-				component.setLocation(hBorder + (order * hSpace), vBorder + (order * vSpace));
-			}
-		}
-		
+		card.setCanFlip(false);		
 		setControls();		
 	}
 	

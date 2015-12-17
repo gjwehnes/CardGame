@@ -112,7 +112,7 @@ public class CardGroup extends JPanel  {
 				int order = this.getComponentZOrder(component);						
 				component.setLocation(hBorder + (order * hSpace), vBorder + (order * vSpace));
 			}
-		}		
+		}
 	}
 	
 	public String toString(){		

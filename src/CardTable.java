@@ -37,6 +37,7 @@ public class CardTable extends JPanel {
 	private int xOffset;		//relative from parent
 	private int yOffset;		//relative from parent
 	private boolean isDragging;
+	private Container origin;
 	private MouseMotionAdapter mma;
 	private MouseAdapter ma;	
 	private ArrayList<CardTableEventsListener> listeners = new ArrayList<CardTableEventsListener>();
@@ -109,6 +110,7 @@ public class CardTable extends JPanel {
 		Container parent = card.getParent();
 		
 		isDragging = true;
+		origin = parent;
 		xOffset = card.getX();
 		yOffset = card.getY();
 		xStartDrag = arg0.getXOnScreen();
@@ -139,8 +141,8 @@ public class CardTable extends JPanel {
 		Card card = (Card)arg0.getSource();
 		Container parent = card.getParent();
 		isDragging = false;
-		boolean placedInGroup = false;
 		CardGroup group = null;
+		Container destination = parent;
 
 		//test if within bounds of another container
 		for (Component component : parent.getComponents()){
@@ -149,29 +151,28 @@ public class CardTable extends JPanel {
 				group = (CardGroup)component;
 				if (isOverlapping(card, group, 50))
 				{
+					destination = group;
 					parent.remove(card);
 					group.add(card);
 					group.setComponentZOrder(card, 0);
 					System.out.println(card.getName() + " overlaps " + group.getName());
-					fireCardAddedToGroupEvent(group, card);
-					placedInGroup = true;
 				}				
 				component.getSize();
 				component.getLocation();
 			}			
 		}
 		
-		if (placedInGroup) {
-			fireCardAddedToGroupEvent(group, card);
+		if (origin instanceof CardGroup){
+			fireCardRemovedFromGroupEvent((CardGroup)origin, card);
 		}
-		else {
-			fireCardRemovedFromGroupEvent(group, card);			
+		
+		if (destination instanceof CardGroup){
+			fireCardAddedToGroupEvent((CardGroup)destination, card);
+		}
+		else if(destination instanceof CardTable && origin instanceof CardGroup) {
 			fireCardAddedToTableEvent(this, card);
 		}
 		
-		//printComponentZOrder(parent);		
-		parent.revalidate();
-		parent.repaint();		
 	}
 	
 	private void mouseDraggedLocal(MouseEvent arg0){
@@ -258,17 +259,18 @@ public class CardTable extends JPanel {
 	
 	private synchronized void fireCardRemovedFromGroupEvent(CardGroup group, Card card) {
 
-		//allow CardGroup to respond to event
-		group.handleCardRemovedFromGroupLocal(group, card);
-
-		//allow CardTable to respond to event
-		this.handleCardRemovedFromGroupLocal(group, card);
-
-		//now allow all other listeners to respond to event
-		for (CardTableEventsListener l : listeners){
-			l.handleCardRemovedFromGroupEvent(group, card);
-		}
-		
+		if (group != null) {
+			//allow CardGroup to respond to event
+			group.handleCardRemovedFromGroupLocal(group, card);
+	
+			//allow CardTable to respond to event
+			this.handleCardRemovedFromGroupLocal(group, card);
+	
+			//now allow all other listeners to respond to event
+			for (CardTableEventsListener l : listeners){
+				l.handleCardRemovedFromGroupEvent(group, card);
+			}
+		}		
 	}
 	
 	private synchronized void fireCardAddedToTableEvent(CardTable table, Card card) {

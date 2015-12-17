@@ -140,12 +140,13 @@ public class CardTable extends JPanel {
 		Container parent = card.getParent();
 		isDragging = false;
 		boolean placedInGroup = false;
+		CardGroup group = null;
 
 		//test if within bounds of another container
 		for (Component component : parent.getComponents()){
 			System.out.println(component.getName() );
 			if (component instanceof CardGroup){
-				CardGroup group = (CardGroup)component;
+				group = (CardGroup)component;
 				if (isOverlapping(card, group, 50))
 				{
 					parent.remove(card);
@@ -160,7 +161,11 @@ public class CardTable extends JPanel {
 			}			
 		}
 		
-		if (! placedInGroup) {
+		if (placedInGroup) {
+			fireCardAddedToGroupEvent(group, card);
+		}
+		else {
+			fireCardRemovedFromGroupEvent(group, card);			
 			fireCardAddedToTableEvent(this, card);
 		}
 		
@@ -239,28 +244,43 @@ public class CardTable extends JPanel {
 
 	private synchronized void fireCardAddedToGroupEvent(CardGroup group, Card card) {
 
-		//first allow all other listeners to respond to event
-		for (CardTableEventsListener l : listeners){
-			l.handleCardAddedToGroupEvent(group, card);
-		}
+		//allow CardGroup to respond to event
+		group.handleCardAddedToGroupLocal(group, card);
 		
 		//allow CardTable to respond to event
 		this.handleCardAddedToGroupLocal(group, card);
-		
-		//allow CardGroup to respond to event
-		group.handleCardAddedToGroupLocal(group, card);
 
+		//now allow all other listeners to respond to event
+		for (CardTableEventsListener l : listeners){
+			l.handleCardAddedToGroupEvent(group, card);
+		}		
+	}
+	
+	private synchronized void fireCardRemovedFromGroupEvent(CardGroup group, Card card) {
+
+		//allow CardGroup to respond to event
+		group.handleCardRemovedFromGroupLocal(group, card);
+
+		//allow CardTable to respond to event
+		this.handleCardRemovedFromGroupLocal(group, card);
+
+		//now allow all other listeners to respond to event
+		for (CardTableEventsListener l : listeners){
+			l.handleCardRemovedFromGroupEvent(group, card);
+		}
+		
 	}
 	
 	private synchronized void fireCardAddedToTableEvent(CardTable table, Card card) {
 
-		//first allow all other listeners to respond to event		
+		//allow CardTable to respond to event
+		this.handleCardAddedToTableLocal(table, card);
+
+		//now allow all other listeners to respond to event		
 		for (CardTableEventsListener l : listeners){
 			l.handleCardAddedToTableEvent(table, card);
 		}
 
-		//allow CardTable to respond to event
-		this.handleCardAddedToTableLocal(table, card);
 		
 	}
 	
@@ -283,6 +303,9 @@ public class CardTable extends JPanel {
 	
 	//CardTable event handlers here
 	private void handleCardAddedToGroupLocal(CardGroup group, Card card){		
+	}
+
+	private void handleCardRemovedFromGroupLocal(CardGroup group, Card card){		
 	}
 
 	private void handleCardAddedToTableLocal(CardTable table, Card card){

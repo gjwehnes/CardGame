@@ -91,6 +91,11 @@ public class CardGroup extends JPanel  {
 	protected void handleCardAddedToGroupLocal(CardGroup group, Card card){
 		reOrder();
 	}
+	
+	protected void handleCardRemovedFromGroupLocal(CardGroup group, Card card){
+		reOrder();
+	}
+
 
 	protected void handleCardFlippedLocal(Container source, Card card){
 		reOrder();

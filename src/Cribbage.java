@@ -78,7 +78,8 @@ public class Cribbage extends JFrame {
 		{
 			public void handleCardAddedToTableEvent(CardTable table, Card card) {handleCardAddedToTableLocal(table, card);}
 			public void handleCardAddedToGroupEvent(CardGroup group, Card card) {handleCardAddedToGroupLocal(group, card);}
-			public void handleCardFlippedEvent(Container source, Card card) {handleCardFlippedLocal(source, card);}		
+			public void handleCardRemovedFromGroupEvent(CardGroup group, Card card) {handleCardRemovedFromGroupLocal(group, card);}
+			public void handleCardFlippedEvent(Container source, Card card) {handleCardFlippedLocal(source, card);}
 		};
 		cardTable.addCardTableEventListener(cte);
 		
@@ -156,6 +157,11 @@ public class Cribbage extends JFrame {
 		setControls();		
 	}
 	
+	private void handleCardRemovedFromGroupLocal(CardGroup group, Card card){
+		card.setCanFlip(true);		
+		setControls();		
+	}
+	
 	private void handleCardFlippedLocal(Container source, Card card){
 		System.out.println("CardGame:" + card.getName() + " in " + source.getName() + " was flipped");
 		setControls();
@@ -205,6 +211,8 @@ public class Cribbage extends JFrame {
 		this.btnCalculate.setEnabled(cardsInHand == 4 && cardsInCrib == 4);
 		this.deck1.setEnabled(false);
 		
+		this.validate();
+		this.repaint();
 	}
 }
 

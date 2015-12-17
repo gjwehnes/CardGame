@@ -115,5 +115,9 @@ public class CardGroup extends JPanel  {
 		}		
 	}
 	
+	public String toString(){		
+		return getName();
+	}
+
 	
 }

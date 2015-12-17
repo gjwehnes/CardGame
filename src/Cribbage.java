@@ -85,6 +85,7 @@ public class Cribbage extends JFrame {
 		
 		
 		handGroup = new CardGroup(96,0);
+		handGroup.setName("handGroup");
 		handGroup.setvSpace(0);
 		handGroup.sethBorder(4);
 		handGroup.setvBorder(4);
@@ -97,6 +98,7 @@ public class Cribbage extends JFrame {
 		handGroup.setLayout(null);
 
 		cribGroup = new CardGroup(96,0);
+		cribGroup.setName("cribGroup");
 		cribGroup.setvSpace(0);
 		cribGroup.sethBorder(4);
 		cribGroup.setvBorder(4);

@@ -124,8 +124,7 @@ public class Card extends JLabel{
 		setFaceUp(! this.faceUp);
 	}
 	
-	public String toString(){
-		
+	public String toString(){		
 		return name;
 	}
 

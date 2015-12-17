@@ -23,6 +23,8 @@ import java.lang.Math;
 import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.JButton;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 
 public class Cribbage extends JFrame {
 
@@ -81,7 +83,11 @@ public class Cribbage extends JFrame {
 		cardTable.addCardTableEventListener(cte);
 		
 		
-		handGroup = new CardGroup();
+		handGroup = new CardGroup(96,0);
+		handGroup.setvSpace(4);
+		handGroup.sethBorder(4);
+		handGroup.setvBorder(4);
+		handGroup.sethSpace(80);
 		handGroup.setBorder(new LineBorder(Color.RED, 2));
 		handGroup.setForeground(Color.GREEN);
 		handGroup.setBackground(Color.GREEN);
@@ -89,12 +95,17 @@ public class Cribbage extends JFrame {
 		cardTable.add(handGroup);
 		handGroup.setLayout(null);
 
-		cribGroup = new CardGroup();
+		cribGroup = new CardGroup(96,0);
+		cribGroup.sethSpace(0);
+		cribGroup.sethBorder(4);
+		cribGroup.setvSpace(16);
+		cribGroup.setvBorder(4);
 		cribGroup.setBorder(new LineBorder(Color.BLUE, 2));
 		cribGroup.setForeground(Color.GREEN);
 		cribGroup.setBackground(Color.GREEN);
 		cribGroup.setBounds(10, 273, 314, 110);
 		cardTable.add(cribGroup);
+		cribGroup.setLayout(null);
 		
 		deck1 = new Deck();
 		deck1.setLocation(10, 11);
@@ -141,12 +152,18 @@ public class Cribbage extends JFrame {
 	}
 	
 	private void handleCardAddedToGroupLocal(CardGroup group, Card card){		
+
 		card.setCanFlip(false);
+		
+		int hSpace = group.gethSpace();
+		int vSpace = group.getvSpace();
+		int hBorder = group.gethBorder();
+		int vBorder = group.getvBorder();
 		
 		for (Component component : group.getComponents()) {
 			if (component instanceof Card){
 				int order = group.getComponentZOrder(component);						
-				component.setLocation(order * 20, 0);
+				component.setLocation(hBorder + (order * hSpace), vBorder + (order * vSpace));
 			}
 		}
 		

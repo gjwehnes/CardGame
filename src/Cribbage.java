@@ -20,6 +20,7 @@ import java.awt.event.MouseMotionAdapter;
 import javax.swing.border.LineBorder;
 
 import java.lang.Math;
+import java.util.ArrayList;
 import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.JButton;
@@ -146,6 +147,8 @@ public class Cribbage extends JFrame {
 		btnDeal.setBounds(381, 11, 89, 23);
 		cardTable.add(btnDeal);
 		
+		
+		
 		setControls();
 	}
 
@@ -155,7 +158,20 @@ public class Cribbage extends JFrame {
 	}
 	
 	private void handleCardAddedToGroupLocal(CardGroup group, Card card){		
-		card.setCanFlip(false);		
+		card.setCanFlip(false);
+		
+		ArrayList<Card> cards = group.getCards();
+		CardComparator c = new CardComparator();
+		cards.sort(c);
+		System.out.println(cards.toString());
+		
+		group.clearGroup();
+		for (Card current : cards) {
+			group.add(current);
+			group.setComponentZOrder(current, 0);			
+		}
+		group.reOrder();
+		
 		setControls();		
 	}
 	

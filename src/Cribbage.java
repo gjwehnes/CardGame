@@ -153,17 +153,18 @@ public class Cribbage extends JFrame {
 	}
 
 	private void handleCardAddedToTableLocal(CardTable table, Card card){
+		System.out.println("Cribbage.handleCardAddedToTableLocal: " + card.getName() + " was added to " + table.getName());
 		card.setCanFlip(true);
 		setControls();
 	}
 	
 	private void handleCardAddedToGroupLocal(CardGroup group, Card card){		
+		System.out.println("Cribbage.handleCardAddedToGroupLocal: " + card.getName() + " was added to " + group.getName());
 		card.setCanFlip(false);
 		
 		ArrayList<Card> cards = group.getCards();
 		CardComparator c = new CardComparator();
 		cards.sort(c);
-		System.out.println(cards.toString());
 		
 		group.clearGroup();
 		for (Card current : cards) {
@@ -176,12 +177,13 @@ public class Cribbage extends JFrame {
 	}
 	
 	private void handleCardRemovedFromGroupLocal(CardGroup group, Card card){
+		System.out.println("Cribbage.handleCardRemovedFromGroupLocal: " + card.getName() + " was removed from " + group.getName());
 		card.setCanFlip(true);		
 		setControls();		
 	}
 	
 	private void handleCardFlippedLocal(Container source, Card card){
-		System.out.println("CardGame:" + card.getName() + " in " + source.getName() + " was flipped");
+		System.out.println("Cribbage.handleCardFlippedLocal: " + card.getName() + " in " + source.getName() + " was flipped");
 		setControls();
 	}
 	
@@ -219,12 +221,11 @@ public class Cribbage extends JFrame {
 	}
 	
 	private void setControls(){
-		
+				
 		int cardsInHand = this.handGroup.getComponentCount();
 		int cardsInCrib = this.cribGroup.getComponentCount();
-		
-		System.out.println("cardsinCrib:" + cardsInCrib);
-		
+		System.out.println("Cribbage.setControls: cardInHand=" + Integer.toString(cardsInHand) + ", cardsInCrib="+ Integer.toString(cardsInCrib));
+				
 		this.btnDeal.setEnabled (true);
 		this.btnCalculate.setEnabled(cardsInHand == 4 && cardsInCrib == 4);
 		this.deck1.setEnabled(false);

@@ -106,6 +106,7 @@ public class CardTable extends JPanel {
 	}
 	
 	private void mousePressedLocal(MouseEvent arg0){
+		System.out.println("CardTable.mousePressedLocal: location = (" + arg0.getXOnScreen() + "," + arg0.getYOnScreen() + ")");
 		Card card = (Card)arg0.getSource();
 		Container parent = card.getParent();
 		
@@ -133,11 +134,14 @@ public class CardTable extends JPanel {
 		parent.repaint();
 						
 		//printComponentZOrder(parent);
-		System.out.println("StartDrag (" + xStartDrag + "," + yStartDrag + ")");
-		System.out.println("Origin (" + xOffset + "," + yOffset + ")");		
+		System.out.print("CardTable.mousePressedLocal:");
+		System.out.print("startDrag = (" + xStartDrag + "," + yStartDrag + "); ");
+		System.out.println("origin = (" + xOffset + "," + yOffset + ")");		
+		
 	}
 	
 	private void mouseReleasedLocal(MouseEvent arg0){
+		System.out.println("CardTable.mouseReleasedLocal:");		
 		Card card = (Card)arg0.getSource();
 		Container parent = card.getParent();
 		isDragging = false;
@@ -146,7 +150,6 @@ public class CardTable extends JPanel {
 
 		//test if within bounds of another container
 		for (Component component : parent.getComponents()){
-			System.out.println(component.getName() );
 			if (component instanceof CardGroup){
 				group = (CardGroup)component;
 				if (isOverlapping(card, group, 50))
@@ -155,7 +158,7 @@ public class CardTable extends JPanel {
 					parent.remove(card);
 					group.add(card);
 					group.setComponentZOrder(card, 0);
-					System.out.println(card.getName() + " overlaps " + group.getName());
+					System.out.println("CardTable.mouseReleasedLocal:"   + card.getName() + " overlaps " + group.getName());
 				}				
 				component.getSize();
 				component.getLocation();
@@ -176,13 +179,13 @@ public class CardTable extends JPanel {
 	}
 	
 	private void mouseDraggedLocal(MouseEvent arg0){
-		System.out.println("Dragged (" + arg0.getXOnScreen() + "," + arg0.getYOnScreen() + ")");
+		System.out.println("CardTable.mouseDraggedLocal: location = (" + arg0.getXOnScreen() + "," + arg0.getYOnScreen() + ")");
 		if (isDragging)
 		{
 			//calculate difference between EndDrag x,y and StartDrag x,y
 			int xDelta =  arg0.getXOnScreen() - xStartDrag;
 			int yDelta =  arg0.getYOnScreen() - yStartDrag;
-			System.out.println("Delta: " + xDelta + "," + yDelta);
+			System.out.println("CardTable.mouseDraggedLocal: delta = (" + xDelta + "," + yDelta + ")");
 					
 			JLabel label = (JLabel)arg0.getSource();
 			//location is relative to parent, so add delta to offset from parent
@@ -193,11 +196,12 @@ public class CardTable extends JPanel {
 	
 	private void mouseClickedLocal(MouseEvent arg0)
 	{
+	    System.out.println("CardTable.mouseClickedLocal:");
 		Card card = (Card)arg0.getSource();
 		//card.getParent().setComponentZOrder(card, 1);				
 
 		if (arg0.getClickCount() == 2 && card.getCanFlip()) {
-		    System.out.println("double clicked" + card.getName());
+		    System.out.println("CardTable.mouseClickedLocal: double-click " + card.getName());
 			card = (Card)arg0.getSource();
 			card.flip();
 			fireCardFlippedEvent(card.getParent(), card);
@@ -206,9 +210,10 @@ public class CardTable extends JPanel {
 
 	private void printComponentZOrder(Container container) 
 	{
+		System.out.print("CardTable.printComponentZOrder:");				
 		for (Component component : container.getComponents()) {
 			if (component instanceof Card){
-				System.out.println( ((Card)component).getName() + ":" + container.getComponentZOrder(component));						
+				System.out.print( ((Card)component).getName() + ":" + container.getComponentZOrder(component));						
 			}
 		}
 		System.out.println();
@@ -288,32 +293,36 @@ public class CardTable extends JPanel {
 	
 	private synchronized void fireCardFlippedEvent(Container source, Card card) {
 
-		//first allow all other listeners to respond to event				
-		for (CardTableEventsListener l : listeners){
-			l.handleCardFlippedEvent(source, card);
-		}
-		
-		//allow CardTable to respond to event
-		this.handleCardFlippedLocal(source, card);
-		
 		//allow CardGroup to respond to event
 		if (source instanceof CardGroup){
 			((CardGroup)source).handleCardFlippedLocal(source, card);
 		}
+
+		//allow CardTable to respond to event
+		this.handleCardFlippedLocal(source, card);
 		
+		//now allow all other listeners to respond to event				
+		for (CardTableEventsListener l : listeners){
+			l.handleCardFlippedEvent(source, card);
+		}
+				
 	}
 	
 	//CardTable event handlers here
 	private void handleCardAddedToGroupLocal(CardGroup group, Card card){		
+		System.out.println("CardTable.handleCardAddedToGroupLocal: " + card.getName() + " was added to " + group.getName());
 	}
 
 	private void handleCardRemovedFromGroupLocal(CardGroup group, Card card){		
+		System.out.println("CardTable.handleCardRemovedFromGroupLocal: " + card.getName() + " was removed from " + group.getName());
 	}
 
 	private void handleCardAddedToTableLocal(CardTable table, Card card){
+		System.out.println("CardTable.handleCardAddedToTableLocal: " + card.getName() + " was added to " + table.getName());
 	}
 
 	private void handleCardFlippedLocal(Container source, Card card){		
+		System.out.println("CardTable.handleCardFlippedLocal: " + card.getName() + " in " + source.getName() + " was flipped");
 	}
 
 	

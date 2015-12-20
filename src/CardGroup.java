@@ -71,7 +71,6 @@ public class CardGroup extends JPanel  {
 		for (Component component : this.getComponents()) {
 			if (component instanceof Card){
 				cards.add((Card)component);
-				System.out.println( ((Card)component).getName() + ":" + this.getComponentZOrder(component));						
 			}
 		}
 
@@ -89,15 +88,18 @@ public class CardGroup extends JPanel  {
 	
 	//CardGroup event handlers
 	protected void handleCardAddedToGroupLocal(CardGroup group, Card card){
+		System.out.println("CardGroup.handleCardAddedToGroupLocal: " + card.getName() + " was added to " + group.getName());
 		reOrder();
 	}
 	
 	protected void handleCardRemovedFromGroupLocal(CardGroup group, Card card){
+		System.out.println("CardGroup.handleCardRemovedFromGroupLocal: " + card.getName() + " was removed from " + group.getName());
 		reOrder();
 	}
 
 
 	protected void handleCardFlippedLocal(Container source, Card card){
+		System.out.println("CardGroup.handleCardFlippedLocal: " + card.getName() + " in " + source.getName() + " was flipped");
 		reOrder();
 	}
 

@@ -104,7 +104,7 @@ public class Deck extends JPanel {
 			drawnCard.setLocation(this.getX() + 4, this.getY() + 4);
 			drawnCard.setFaceUp(true);
 			((CardTable)parent).add(drawnCard);
-			System.out.println("Drawn Card: " + drawnCard.toString());
+			System.out.println("Deck.mouseClickedLocal: Drawn Card = " + drawnCard.toString());
 		}				
 	}
 

@@ -54,6 +54,7 @@ public class CardTable extends JPanel {
 		mma = new MouseMotionAdapter()
 		{
 			public void mouseDragged(MouseEvent arg0) {mouseDraggedLocal(arg0);}
+			public void mouseMoved(MouseEvent arg0) {mouseMovedLocal(arg0);}
 		};
 		
 		ma = new MouseAdapter() {
@@ -177,7 +178,11 @@ public class CardTable extends JPanel {
 		}
 		
 	}
-	
+
+	private void mouseMovedLocal(MouseEvent arg0){
+		System.out.println("CardTable.mousMovedLocal: location = (" + arg0.getXOnScreen() + "," + arg0.getYOnScreen() + ")");
+	}
+
 	private void mouseDraggedLocal(MouseEvent arg0){
 		System.out.println("CardTable.mouseDraggedLocal: location = (" + arg0.getXOnScreen() + "," + arg0.getYOnScreen() + ")");
 		if (isDragging)

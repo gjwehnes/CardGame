@@ -2,11 +2,17 @@
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
 public class CardGroup extends JPanel  {
+
+	private MouseMotionAdapter mma;
+	private MouseAdapter ma;	
 
 	private int hSpace = 0;
 	private int vSpace = 0;
@@ -48,6 +54,18 @@ public class CardGroup extends JPanel  {
 	
 	public CardGroup() {
 		super();
+		mma = new MouseMotionAdapter()
+		{
+			public void mouseDragged(MouseEvent arg0) {mouseDraggedLocal(arg0);}
+		};
+		
+		ma = new MouseAdapter() {
+			public void mousePressed(MouseEvent arg0) {mousePressedLocal(arg0);}
+			public void mouseReleased(MouseEvent arg0) {mouseReleasedLocal(arg0);}						
+			@Override
+			public void mouseClicked(MouseEvent arg0) {mouseClickedLocal(arg0);}
+		};				
+		
 	}
 
 	public CardGroup(int hSpace, int vSpace) {
@@ -86,6 +104,18 @@ public class CardGroup extends JPanel  {
 		}		
 	}
 	
+	public Card add(Card card){
+
+		card.removeMouseMotionListener(mma);
+		card.addMouseMotionListener(mma);
+		card.removeMouseListener(ma);
+		card.addMouseListener(ma);
+		this.add((Component)card, 0);
+		card.repaint();		
+		return card;
+	}
+
+	
 	//CardGroup event handlers
 	protected void handleCardAddedToGroupLocal(CardGroup group, Card card){
 		System.out.println("CardGroup.handleCardAddedToGroupLocal: " + card.getName() + " was added to " + group.getName());
@@ -101,6 +131,23 @@ public class CardGroup extends JPanel  {
 	protected void handleCardFlippedLocal(Container source, Card card){
 		System.out.println("CardGroup.handleCardFlippedLocal: " + card.getName() + " in " + source.getName() + " was flipped");
 		reOrder();
+	}
+	
+	private void mousePressedLocal(MouseEvent arg0){
+		System.out.println("CardGroup.mousePressedLocal: location = (" + arg0.getXOnScreen() + "," + arg0.getYOnScreen() + ")");
+	}
+
+	private void mouseReleasedLocal(MouseEvent arg0){
+		System.out.println("CardGroup.mouseReleasedLocal:");	
+	}
+	
+	private void mouseDraggedLocal(MouseEvent arg0){
+		System.out.println("CardGroup.mouseDraggedLocal: location = (" + arg0.getXOnScreen() + "," + arg0.getYOnScreen() + ")");
+	}
+	
+	private void mouseClickedLocal(MouseEvent arg0)
+	{
+	    System.out.println("CardTable.mouseClickedLocal:");
 	}
 
 	protected void reOrder(){

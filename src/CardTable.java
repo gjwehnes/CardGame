@@ -32,10 +32,6 @@ public class CardTable extends JPanel {
 	//-add deck
 	//-add events / events listener, seperate logic / gui
 	
-	private int xStartDrag;		//absolute
-	private int yStartDrag;		//absolute
-	private int xOffset;		//relative from parent
-	private int yOffset;		//relative from parent
 	private boolean isDragging;
 	private Container origin;
 	private MouseMotionAdapter mma;
@@ -109,91 +105,133 @@ public class CardTable extends JPanel {
 	private void mousePressedLocal(MouseEvent arg0){
 		System.out.println("CardTable.mousePressedLocal: location = (" + arg0.getXOnScreen() + "," + arg0.getYOnScreen() + ")");
 		Card card = (Card)arg0.getSource();
+		origin = card.getParent();
 		Container parent = card.getParent();
 		
-		isDragging = true;
-		origin = parent;
-		xOffset = card.getX();
-		yOffset = card.getY();
-		xStartDrag = arg0.getXOnScreen();
-		yStartDrag = arg0.getYOnScreen();
-		
-		//place card onto top level if not already there
-		if (parent != this)
-		{
-			this.setComponentZOrder(card, 0);
-			//Offset has to change as we are now in a different container
-			xOffset += parent.getX();
-			yOffset += parent.getY();
-			//parent is now content pane!
-			parent = this;
+		fireCardDraggingEvent(card);
+		ArrayList<Card> relatedCards = card.getRelated();
+		if (relatedCards == null) {
+			relatedCards = new ArrayList<Card>();
 		}
+		//a bit of a hack: add the card to the relatedCards list, so that we can handle them in bulk	
+		relatedCards.add(card);
+		
+		isDragging = true;
+		card.setStartDragPosition(arg0);
+		
+		//handle related cards
+		for (Card relatedCard: relatedCards){
 
-		card.setLocation(xOffset, yOffset);				
-		parent.setComponentZOrder(card, 0);
-		parent.repaint();
-						
-		//printComponentZOrder(parent);
+			Container relatedParent = relatedCard.getParent();				
+			relatedCard.setStartDragPosition(arg0);
+
+			if (relatedParent != this)
+			{
+				this.setComponentZOrder(relatedCard, 0);
+				//Offset has to change as we are now in a different container
+				relatedCard.startDragX += relatedParent.getX();
+				relatedCard.startDragY += relatedParent.getY();
+				//parent is now content pane!
+				relatedParent = this;
+			}
+			relatedCard.setLocation(relatedCard.startDragX, relatedCard.startDragY);				
+			relatedParent.setComponentZOrder(relatedCard, 0);
+			relatedParent.repaint();
+			
+		}
+		
 		System.out.print("CardTable.mousePressedLocal:");
-		System.out.print("startDrag = (" + xStartDrag + "," + yStartDrag + "); ");
-		System.out.println("origin = (" + xOffset + "," + yOffset + ")");		
+		System.out.print("startDrag = (" + card.startDragXOnScreen + "," + card.startDragYOnScreen + "); ");
+		System.out.println("origin = (" + card.startDragX + "," + card.startDragY + ")");		
 		
 	}
 	
 	private void mouseReleasedLocal(MouseEvent arg0){
 		System.out.println("CardTable.mouseReleasedLocal:");		
-		Card card = (Card)arg0.getSource();
-		Container parent = card.getParent();
+		Card originalCard = (Card)arg0.getSource();
+		//Container parent = card.getParent();
 		isDragging = false;
-		CardGroup group = null;
-		Container destination = parent;
+		//CardGroup group = null;
+		//Container destination = parent;
+		
+		
+		ArrayList<Card> relatedCards = originalCard.getRelated();
+		if (relatedCards == null) {
+			relatedCards = new ArrayList<Card>();
+		}
+		
+		//handle related cards
+		for (Card relatedCard: relatedCards){
 
-		//test if within bounds of another container
-		for (Component component : parent.getComponents()){
-			if (component instanceof CardGroup){
-				group = (CardGroup)component;
-				if (isOverlapping(card, group, 50))
-				{
-					destination = group;
-					parent.remove(card);
-					group.add(card);
-					group.setComponentZOrder(card, 0);
-					System.out.println("CardTable.mouseReleasedLocal:"   + card.getName() + " overlaps " + group.getName());
-				}				
-				component.getSize();
-				component.getLocation();
-			}			
+			Container relatedParent = relatedCard.getParent();
+			CardGroup relatedGroup = null;
+			Container relatedDestination = relatedParent;
+			
+			//test if within bounds of another container
+			for (Component relatedComponent : relatedParent.getComponents()){
+				if (relatedComponent instanceof CardGroup){
+					relatedGroup = (CardGroup)relatedComponent;
+					if (isOverlapping(relatedCard, relatedGroup, 50))
+					{
+						relatedDestination = relatedGroup;
+						relatedParent.remove(relatedCard);
+						relatedGroup.add(relatedCard);
+						relatedGroup.setComponentZOrder(relatedCard, 0);
+						System.out.println("CardTable.mouseReleasedLocal:"   + relatedCard.getName() + " overlaps " + relatedGroup.getName());
+					}				
+					relatedComponent.getSize();
+					relatedComponent.getLocation();
+				}			
+			}
+			
+			if (relatedCard.getStartDragOrigin() instanceof CardGroup){
+				if (relatedCard.getStartDragOrigin() != relatedDestination){
+					fireCardRemovedFromGroupEvent((CardGroup)relatedCard.getStartDragOrigin(), relatedCard);				
+				}
+			}
+			
+			if (relatedDestination instanceof CardGroup){
+				if (relatedCard.getStartDragOrigin() != relatedDestination){
+					fireCardAddedToGroupEvent((CardGroup)relatedDestination, relatedCard);
+				}
+			}
+			else if(relatedDestination instanceof CardTable && relatedCard.getStartDragOrigin() instanceof CardGroup) {
+				fireCardAddedToTableEvent(this, relatedCard);
+			}
+			
+			
 		}
 		
-		if (origin instanceof CardGroup){
-			fireCardRemovedFromGroupEvent((CardGroup)origin, card);
-		}
-		
-		if (destination instanceof CardGroup){
-			fireCardAddedToGroupEvent((CardGroup)destination, card);
-		}
-		else if(destination instanceof CardTable && origin instanceof CardGroup) {
-			fireCardAddedToTableEvent(this, card);
-		}
+		fireCardDraggedEvent(originalCard);
 		
 	}
 
 	private void mouseMovedLocal(MouseEvent arg0){
-		System.out.println("CardTable.mousMovedLocal: location = (" + arg0.getXOnScreen() + "," + arg0.getYOnScreen() + ")");
+		//System.out.println("CardTable.mousMovedLocal: location = (" + arg0.getXOnScreen() + "," + arg0.getYOnScreen() + ")");
 	}
 
 	private void mouseDraggedLocal(MouseEvent arg0){
 		System.out.println("CardTable.mouseDraggedLocal: location = (" + arg0.getXOnScreen() + "," + arg0.getYOnScreen() + ")");
 		if (isDragging)
 		{
+			Card card = (Card)arg0.getSource();
+			ArrayList<Card> relatedCards = card.getRelated();
+
 			//calculate difference between EndDrag x,y and StartDrag x,y
-			int xDelta =  arg0.getXOnScreen() - xStartDrag;
-			int yDelta =  arg0.getYOnScreen() - yStartDrag;
+			int xDelta =  arg0.getXOnScreen() - card.startDragXOnScreen;
+			int yDelta =  arg0.getYOnScreen() - card.startDragYOnScreen;
 			System.out.println("CardTable.mouseDraggedLocal: delta = (" + xDelta + "," + yDelta + ")");
-					
-			JLabel label = (JLabel)arg0.getSource();
-			//location is relative to parent, so add delta to offset from parent
-			label.setLocation(xOffset + xDelta , yOffset + yDelta);				
+								
+			//handle related cards
+			if (relatedCards != null){
+				for (Card relatedCard: relatedCards){
+					//location is relative to parent, so add delta to offset from parent
+					relatedCard.setLocation(relatedCard.startDragX + xDelta , relatedCard.startDragY + yDelta);
+				}					
+			}
+			
+			card.setLocation(card.startDragX + xDelta , card.startDragY + yDelta);
+			
 		}		
 	}
 
@@ -312,6 +350,20 @@ public class CardTable extends JPanel {
 				
 	}
 	
+	private synchronized void fireCardDraggingEvent(Card card) {		
+		//now allow all other listeners to respond to event				
+		for (CardTableEventsListener l : listeners){
+			l.handleCardDragging(card);
+		}
+	}
+
+	private synchronized void fireCardDraggedEvent(Card card) {		
+		//now allow all other listeners to respond to event				
+		for (CardTableEventsListener l : listeners){
+			l.handleCardDragged(card);
+		}
+	}
+
 	//CardTable event handlers here
 	private void handleCardAddedToGroupLocal(CardGroup group, Card card){		
 		System.out.println("CardTable.handleCardAddedToGroupLocal: " + card.getName() + " was added to " + group.getName());

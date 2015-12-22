@@ -1,5 +1,8 @@
 
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -13,6 +16,14 @@ public class Card extends JLabel{
 	private boolean faceUp = true;
 	private String imageFileName;
 	public final static String CARD_BACK_NAME = "res/Back.png";
+
+	protected Container startDragOrigin;
+	protected int startDragXOnScreen;		//absolute
+	protected int startDragYOnScreen;		//absolute
+	protected int startDragX;				//relative from parent
+	protected int startDragY;				//relative from parent
+
+	private ArrayList<Card> related = null;
 	
 	public Card(String name, Suit suit, FaceValue faceValue) {
 
@@ -112,12 +123,68 @@ public class Card extends JLabel{
 		}
 	}
 	
+	public ArrayList<Card> getRelated() {
+		return related;
+	}
+
+	public void setRelated(ArrayList<Card> related) {
+		this.related = related;
+	}
+
 	public boolean getCanFlip() {
 		return canFlip;
 	}
 
 	public void setCanFlip(boolean canFlip) {
 		this.canFlip = canFlip;
+	}
+
+	public Container getStartDragOrigin() {
+		return startDragOrigin;
+	}
+
+	public void setStartDragOrigin(Container startDragOrigin) {
+		this.startDragOrigin = startDragOrigin;
+	}
+
+	public int getStartDragXOnScreen() {
+		return startDragXOnScreen;
+	}
+
+	public void setStartDragXOnScreen(int startDragXOnScreen) {
+		this.startDragXOnScreen = startDragXOnScreen;
+	}
+
+	public int getStartDragYOnScreen() {
+		return startDragYOnScreen;
+	}
+
+	public void setStartDragYOnScreen(int startDragYOnScreen) {
+		this.startDragYOnScreen = startDragYOnScreen;
+	}
+
+	public int getStartDragX() {
+		return startDragX;
+	}
+
+	public void setStartDragX(int startDragX) {
+		this.startDragX = startDragX;
+	}
+
+	public int getStartDragY() {
+		return startDragY;
+	}
+
+	public void setStartDragY(int startDragY) {
+		this.startDragY = startDragY;
+	}
+	
+	public void setStartDragPosition(MouseEvent arg0){
+		this.startDragOrigin = this.getParent();
+		this.startDragX = this.getX();
+		this.startDragY = this.getY();
+		this.startDragXOnScreen = arg0.getXOnScreen();
+		this.startDragYOnScreen = arg0.getYOnScreen();		
 	}
 
 	public void flip() {

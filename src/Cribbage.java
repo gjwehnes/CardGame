@@ -47,9 +47,6 @@ public class Cribbage extends JFrame {
 	private Card cribCard2;
 	private Card cutCard;
 	
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -81,7 +78,10 @@ public class Cribbage extends JFrame {
 			public void handleCardAddedToGroupEvent(CardGroup group, Card card) {handleCardAddedToGroupLocal(group, card);}
 			public void handleCardRemovedFromGroupEvent(CardGroup group, Card card) {handleCardRemovedFromGroupLocal(group, card);}
 			public void handleCardFlippedEvent(Container source, Card card) {handleCardFlippedLocal(source, card);}
+			public void handleCardDragging(Card card) {handleCardDraggingLocal(card);}
+			public void handleCardDragged(Card card) {handleCardDraggedLocal(card);}
 		};
+		
 		cardTable.addCardTableEventListener(cte);
 		
 		
@@ -112,7 +112,7 @@ public class Cribbage extends JFrame {
 		cribGroup.setLayout(null);
 		
 		deck1 = new Deck();
-		deck1.setLocation(10, 11);
+		deck1.setLocation(8, 8);
 		cardTable.add(deck1);
 		
 		JLabel lblHand = new JLabel("Hand");
@@ -184,6 +184,20 @@ public class Cribbage extends JFrame {
 	
 	private void handleCardFlippedLocal(Container source, Card card){
 		System.out.println("Cribbage.handleCardFlippedLocal: " + card.getName() + " in " + source.getName() + " was flipped");
+		setControls();
+	}
+	
+	private void handleCardDraggingLocal(Card card){
+		System.out.println("Cribbage.handleCardDraggingLocal: " + card.getName());
+		ArrayList<Card> related = new ArrayList<Card>();
+		//related.add(related1);
+		card.setRelated(related);
+		setControls();
+	}
+	
+	private void handleCardDraggedLocal(Card card){
+		System.out.println("Cribbage.handleCardDraggedLocal: " + card.getName());
+		card.setRelated(null);
 		setControls();
 	}
 	

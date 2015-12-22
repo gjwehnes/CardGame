@@ -121,8 +121,7 @@ public class CardTable extends JPanel {
 		//place card onto top level if not already there
 		if (parent != this)
 		{
-			parent.remove(card);
-			this.add(card);
+			this.setComponentZOrder(card, 0);
 			//Offset has to change as we are now in a different container
 			xOffset += parent.getX();
 			yOffset += parent.getY();

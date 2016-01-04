@@ -299,8 +299,8 @@ public class CardTable extends JPanel {
 		this.handleCardAddedToGroupLocal(group, card);
 
 		//now allow all other listeners to respond to event
-		for (CardTableEventsListener l : listeners){
-			l.handleCardAddedToGroupEvent(group, card);
+		for (CardTableEventsListener listener : listeners){
+			listener.handleCardAddedToGroupEvent(group, card);
 		}		
 	}
 	
@@ -314,8 +314,8 @@ public class CardTable extends JPanel {
 			this.handleCardRemovedFromGroupLocal(group, card);
 	
 			//now allow all other listeners to respond to event
-			for (CardTableEventsListener l : listeners){
-				l.handleCardRemovedFromGroupEvent(group, card);
+			for (CardTableEventsListener listener : listeners){
+				listener.handleCardRemovedFromGroupEvent(group, card);
 			}
 		}		
 	}
@@ -326,8 +326,8 @@ public class CardTable extends JPanel {
 		this.handleCardAddedToTableLocal(table, card);
 
 		//now allow all other listeners to respond to event		
-		for (CardTableEventsListener l : listeners){
-			l.handleCardAddedToTableEvent(table, card);
+		for (CardTableEventsListener listener : listeners){
+			listener.handleCardAddedToTableEvent(table, card);
 		}
 
 		
@@ -344,23 +344,23 @@ public class CardTable extends JPanel {
 		this.handleCardFlippedLocal(source, card);
 		
 		//now allow all other listeners to respond to event				
-		for (CardTableEventsListener l : listeners){
-			l.handleCardFlippedEvent(source, card);
+		for (CardTableEventsListener listener : listeners){
+			listener.handleCardFlippedEvent(source, card);
 		}
 				
 	}
 	
 	private synchronized void fireCardDraggingEvent(Card card) {		
 		//now allow all other listeners to respond to event				
-		for (CardTableEventsListener l : listeners){
-			l.handleCardDragging(card);
+		for (CardTableEventsListener listener : listeners){
+			listener.handleCardDragging(card);
 		}
 	}
 
 	private synchronized void fireCardDraggedEvent(Card card) {		
 		//now allow all other listeners to respond to event				
-		for (CardTableEventsListener l : listeners){
-			l.handleCardDragged(card);
+		for (CardTableEventsListener listener : listeners){
+			listener.handleCardDragged(card);
 		}
 	}
 

@@ -78,7 +78,7 @@ public class Cribbage extends JFrame {
 			public void handleCardAddedToGroupEvent(CardGroup group, Card card) {handleCardAddedToGroupLocal(group, card);}
 			public void handleCardRemovedFromGroupEvent(CardGroup group, Card card) {handleCardRemovedFromGroupLocal(group, card);}
 			public void handleCardFlippedEvent(Container source, Card card) {handleCardFlippedLocal(source, card);}
-			public void handleCardDragging(Card card) {handleCardDraggingLocal(card);}
+			public boolean handleCardDragging(Card card) {return handleCardDraggingLocal(card);}
 			public void handleCardDragged(Card card) {handleCardDraggedLocal(card);}
 		};
 		
@@ -187,12 +187,13 @@ public class Cribbage extends JFrame {
 		setControls();
 	}
 	
-	private void handleCardDraggingLocal(Card card){
+	private boolean handleCardDraggingLocal(Card card){
 		System.out.println("Cribbage.handleCardDraggingLocal: " + card.getName());
 		ArrayList<Card> related = new ArrayList<Card>();
 		//related.add(related1);
 		card.setRelated(related);
 		setControls();
+		return false;
 	}
 	
 	private void handleCardDraggedLocal(Card card){

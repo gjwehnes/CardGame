@@ -3,8 +3,12 @@
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -38,14 +42,19 @@ public class CardTable extends JPanel {
 	private MouseAdapter ma;	
 	private ArrayList<CardTableEventsListener> listeners = new ArrayList<CardTableEventsListener>();
 	
-	/**
-	 * Create the frame.
-	 */
+	private Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+	private Cursor defaultCursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
+	private Cursor waitCursor = null;
+	
 	public CardTable() {
 		this.setBackground(Color.GREEN);
 		this.setBorder(new EmptyBorder(5, 5, 5, 5));
 		this.setLayout(null);
 		this.setName("CardTable1");
+		
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		Image image = toolkit.getImage("res/no-drop.png");
+		waitCursor = toolkit.createCustomCursor(image , new Point(0,0), "img");
 		
 		mma = new MouseMotionAdapter()
 		{
@@ -159,6 +168,7 @@ public class CardTable extends JPanel {
 		if (relatedCards == null) {
 			relatedCards = new ArrayList<Card>();
 		}
+		relatedCards.add(originalCard);
 		
 		//handle related cards
 		for (Card relatedCard: relatedCards){
@@ -203,6 +213,7 @@ public class CardTable extends JPanel {
 		}
 		
 		fireCardDraggedEvent(originalCard);
+		this.setCursor(defaultCursor);
 		
 	}
 
@@ -212,8 +223,8 @@ public class CardTable extends JPanel {
 
 	private void mouseDraggedLocal(MouseEvent arg0){
 		System.out.println("CardTable.mouseDraggedLocal: location = (" + arg0.getXOnScreen() + "," + arg0.getYOnScreen() + ")");
-		if (isDragging)
-		{
+		
+		if (isDragging)	{
 			Card card = (Card)arg0.getSource();
 			ArrayList<Card> relatedCards = card.getRelated();
 
@@ -231,6 +242,13 @@ public class CardTable extends JPanel {
 			}
 			
 			card.setLocation(card.startDragX + xDelta , card.startDragY + yDelta);
+
+			if (fireCardDraggingEvent(card) == true) {
+				this.setCursor(handCursor);
+			}
+			else {
+				this.setCursor(waitCursor);
+			}
 			
 		}		
 	}
@@ -350,11 +368,26 @@ public class CardTable extends JPanel {
 				
 	}
 	
-	private synchronized void fireCardDraggingEvent(Card card) {		
+	private synchronized boolean fireCardDraggingEvent(Card card) {
+		
+		boolean vetoed = false;
+		
+		//test if within bounds of another container
+		Container target = this;
+		for (Component c : this.getComponents()){
+			if (c instanceof CardGroup){
+				if (isOverlapping(card, (CardGroup)c, 50)) {
+					target = (Container)c;
+				}
+			}
+		}
+		
 		//now allow all other listeners to respond to event				
 		for (CardTableEventsListener listener : listeners){
-			listener.handleCardDragging(card);
+			vetoed = vetoed || listener.handleCardDragging(card, target);
 		}
+		
+		return vetoed;
 	}
 
 	private synchronized void fireCardDraggedEvent(Card card) {		

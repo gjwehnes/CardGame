@@ -39,6 +39,9 @@
 /AS.png
 /Back.png
 /Card.class
+/CardComparator.class
+/CardGroup$1.class
+/CardGroup$2.class
 /CardGroup.class
 /CardTable$1.class
 /CardTable$2.class
@@ -61,13 +64,10 @@
 /KD.png
 /KH.png
 /KS.png
-/MouseAdapter.class
-/MouseMotionAdapter.class
 /QC.png
 /QD.png
 /QH.png
 /QS.png
+/MouseAdapter.class
+/MouseMotionAdapter.class
 /Suit.class
-/CardComparator.class
-/CardGroup$1.class
-/CardGroup$2.class

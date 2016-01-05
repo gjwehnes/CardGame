@@ -31,10 +31,6 @@ public class CardTable extends JPanel {
 
 	//TODO
 	//-cannot flip cards while in container
-	//-add ability to add cards in order within group (create drop method in group class)
-	//-restrict cards from re-arranging in group
-	//-add deck
-	//-add events / events listener, seperate logic / gui
 	
 	private boolean isDragging;
 	private Container origin;
@@ -163,12 +159,14 @@ public class CardTable extends JPanel {
 		//CardGroup group = null;
 		//Container destination = parent;
 		
-		
+		boolean vetoed = (fireCardDraggingEvent(originalCard) == false);
+					
 		ArrayList<Card> relatedCards = originalCard.getRelated();
 		if (relatedCards == null) {
 			relatedCards = new ArrayList<Card>();
 		}
 		relatedCards.add(originalCard);
+					
 		
 		//handle related cards
 		for (Card relatedCard: relatedCards){
@@ -176,42 +174,52 @@ public class CardTable extends JPanel {
 			Container relatedParent = relatedCard.getParent();
 			CardGroup relatedGroup = null;
 			Container relatedDestination = relatedParent;
-			
-			//test if within bounds of another container
-			for (Component relatedComponent : relatedParent.getComponents()){
-				if (relatedComponent instanceof CardGroup){
-					relatedGroup = (CardGroup)relatedComponent;
-					if (isOverlapping(relatedCard, relatedGroup, 50))
-					{
-						relatedDestination = relatedGroup;
-						relatedParent.remove(relatedCard);
-						relatedGroup.add(relatedCard);
-						relatedGroup.setComponentZOrder(relatedCard, 0);
-						System.out.println("CardTable.mouseReleasedLocal:"   + relatedCard.getName() + " overlaps " + relatedGroup.getName());
-					}				
-					relatedComponent.getSize();
-					relatedComponent.getLocation();
-				}			
+
+			if (vetoed) {
+				//return to original location
+				Container originalContainer = relatedCard.getStartDragOrigin();
+				relatedParent.remove(relatedCard);
+				originalContainer.add(relatedCard);
+				relatedCard.setLocation(relatedCard.startDragX, relatedCard.startDragY);
+				originalContainer.setComponentZOrder(relatedCard, 0);				
 			}
+			else {
 			
-			if (relatedCard.getStartDragOrigin() instanceof CardGroup){
-				if (relatedCard.getStartDragOrigin() != relatedDestination){
-					fireCardRemovedFromGroupEvent((CardGroup)relatedCard.getStartDragOrigin(), relatedCard);				
+				//test if within bounds of another container
+				for (Component relatedComponent : relatedParent.getComponents()){
+					if (relatedComponent instanceof CardGroup){
+						relatedGroup = (CardGroup)relatedComponent;
+						if (isOverlapping(relatedCard, relatedGroup, 50))
+						{
+							relatedDestination = relatedGroup;
+							relatedParent.remove(relatedCard);
+							relatedGroup.add(relatedCard);
+							relatedGroup.setComponentZOrder(relatedCard, 0);
+							System.out.println("CardTable.mouseReleasedLocal:"   + relatedCard.getName() + " overlaps " + relatedGroup.getName());
+						}				
+						relatedComponent.getSize();
+						relatedComponent.getLocation();
+					}			
+				}
+				
+				if (relatedCard.getStartDragOrigin() instanceof CardGroup){
+					if (relatedCard.getStartDragOrigin() != relatedDestination){
+						fireCardRemovedFromGroupEvent((CardGroup)relatedCard.getStartDragOrigin(), relatedCard);				
+					}
+				}
+				
+				if (relatedDestination instanceof CardGroup){
+					if (relatedCard.getStartDragOrigin() != relatedDestination){
+						fireCardAddedToGroupEvent((CardGroup)relatedDestination, relatedCard);
+					}
+				}
+				else if(relatedDestination instanceof CardTable && relatedCard.getStartDragOrigin() instanceof CardGroup) {
+					fireCardAddedToTableEvent(this, relatedCard);
 				}
 			}
-			
-			if (relatedDestination instanceof CardGroup){
-				if (relatedCard.getStartDragOrigin() != relatedDestination){
-					fireCardAddedToGroupEvent((CardGroup)relatedDestination, relatedCard);
-				}
-			}
-			else if(relatedDestination instanceof CardTable && relatedCard.getStartDragOrigin() instanceof CardGroup) {
-				fireCardAddedToTableEvent(this, relatedCard);
-			}
-			
 			
 		}
-		
+
 		fireCardDraggedEvent(originalCard);
 		this.setCursor(defaultCursor);
 		

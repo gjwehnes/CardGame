@@ -31,10 +31,6 @@ public class Cribbage extends JFrame {
 
 	//TODO
 	//-cannot flip cards while in container
-	//-add ability to add cards in order within group (create drop method in group class)
-	//-restrict cards from re-arranging in group
-	//-add deck
-	//-add events / events listener, separate logic / gui
 	
 	private CardTable cardTable;
 	private CardTableEventAdapter cte;

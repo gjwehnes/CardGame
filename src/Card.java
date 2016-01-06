@@ -15,7 +15,10 @@ public class Card extends JLabel{
 	private boolean canFlip = true;
 	private boolean faceUp = true;
 	private String imageFileName;
+	
 	public final static String CARD_BACK_NAME = "res/Back.png";
+	public final static int CARD_WIDTH = 72;
+	public final static int CARD_HEIGHT = 96;
 
 	protected Container startDragOrigin;
 	protected int startDragXOnScreen;		//absolute

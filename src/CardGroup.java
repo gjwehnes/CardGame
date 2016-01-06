@@ -66,6 +66,7 @@ public class CardGroup extends JPanel  {
 			public void mouseClicked(MouseEvent arg0) {mouseClickedLocal(arg0);}
 		};				
 		
+		this.setLayout(null);
 	}
 
 	public CardGroup(int hSpace, int vSpace) {

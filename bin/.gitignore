@@ -64,10 +64,11 @@
 /KD.png
 /KH.png
 /KS.png
+/MouseAdapter.class
+/MouseMotionAdapter.class
 /QC.png
 /QD.png
 /QH.png
 /QS.png
-/MouseAdapter.class
-/MouseMotionAdapter.class
 /Suit.class
+/no-drop.png

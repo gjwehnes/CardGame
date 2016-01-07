@@ -6,6 +6,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import javax.swing.JPanel;
 
@@ -149,6 +150,18 @@ public class CardGroup extends JPanel  {
 	private void mouseClickedLocal(MouseEvent arg0)
 	{
 	    System.out.println("CardTable.mouseClickedLocal:");
+	}
+
+	protected void sort(Comparator<Card> c) {
+		ArrayList<Card> cards = this.getCards();
+		cards.sort(c);
+		
+		this.clearGroup();
+		for (Card current : cards) {
+			this.add(current);
+			this.setComponentZOrder(current, 0);			
+		}
+		this.reOrder();		
 	}
 
 	protected void reOrder(){

@@ -1,7 +1,6 @@
 
 
 public enum FaceValue {
-	ACE,
 	KING,
 	QUEEN,
 	JACK,
@@ -13,5 +12,6 @@ public enum FaceValue {
 	FIVE,
 	FOUR,
 	THREE,
-	TWO	
+	TWO,
+	ACE
 }

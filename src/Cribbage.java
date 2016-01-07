@@ -42,6 +42,7 @@ public class Cribbage extends JFrame {
 	private Card cribCard1;
 	private Card cribCard2;
 	private Card cutCard;
+	CardComparator comparator = new CardComparator();
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -157,18 +158,7 @@ public class Cribbage extends JFrame {
 	private void handleCardAddedToGroupLocal(CardGroup group, Card card){		
 		System.out.println("Cribbage.handleCardAddedToGroupLocal: " + card.getName() + " was added to " + group.getName());
 		card.setCanFlip(false);
-		
-		ArrayList<Card> cards = group.getCards();
-		CardComparator c = new CardComparator();
-		cards.sort(c);
-		
-		group.clearGroup();
-		for (Card current : cards) {
-			group.add(current);
-			group.setComponentZOrder(current, 0);			
-		}
-		group.reOrder();
-		
+				
 		setControls();		
 	}
 	
@@ -189,6 +179,10 @@ public class Cribbage extends JFrame {
 			setControls();
 			return false;
 		}
+		else if (dropTarget == cribGroup && cribGroup.getComponentCount() >= 4) {
+			setControls();
+			return false;
+		}
 		else {
 			System.out.println("Cribbage.handleCardDraggingLocal: " + card.getName());
 			ArrayList<Card> related = new ArrayList<Card>();
@@ -199,9 +193,15 @@ public class Cribbage extends JFrame {
 	}
 	
 	private void handleCardDraggedLocal(Card card){
-		System.out.println("Cribbage.handleCardDraggedLocal: " + card.getName());
+		System.out.print("Cribbage.handleCardDraggedLocal: " + card.getName());
+		System.out.println("; location = (" + card.getX() + "," + card.getY() + ")");
 		card.setRelated(null);
+
+		card.validate();
+		card.repaint();
+				
 		setControls();
+
 	}
 	
 	private void dealCards(){
@@ -222,6 +222,7 @@ public class Cribbage extends JFrame {
 		cribCard2.setFaceUp(false);
 		cribGroup.add(cribCard1);
 		cribGroup.add(cribCard2);
+		cribGroup.reOrder();
 		cribGroup.repaint();
 		
 		cutCard = deck1.drawCard();
@@ -247,8 +248,13 @@ public class Cribbage extends JFrame {
 		this.btnCalculate.setEnabled(cardsInHand == 4 && cardsInCrib == 4);
 		this.deck1.setEnabled(false);
 		
+		handGroup.sort(comparator);
+				
 		this.validate();
 		this.repaint();
 	}
+	
+	
+	
 }
 

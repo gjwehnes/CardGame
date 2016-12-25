@@ -1,7 +1,3 @@
-/10C.png
-/10D.png
-/10H.png
-/10S.png
 /2C.png
 /2D.png
 /2H.png
@@ -33,6 +29,10 @@
 /9D.png
 /9H.png
 /9S.png
+/10C.png
+/10D.png
+/10H.png
+/10S.png
 /AC.png
 /AD.png
 /AH.png
@@ -66,9 +66,9 @@
 /KS.png
 /MouseAdapter.class
 /MouseMotionAdapter.class
+/no-drop.png
 /QC.png
 /QD.png
 /QH.png
 /QS.png
 /Suit.class
-/no-drop.png

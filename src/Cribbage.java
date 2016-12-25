@@ -36,6 +36,8 @@ public class Cribbage extends JFrame {
 	private CardTableEventAdapter cte;
 	private CardGroup handGroup;
 	private CardGroup cribGroup;
+	private JLabel lblHand;
+	private JLabel lblCrib;
 	private JButton btnCalculate;
 	private JButton btnDeal;
 	private Deck deck1 ;
@@ -104,7 +106,7 @@ public class Cribbage extends JFrame {
 		cribGroup.setBorder(new LineBorder(Color.BLUE, 2));
 		cribGroup.setForeground(Color.GREEN);
 		cribGroup.setBackground(Color.GREEN);
-		cribGroup.setBounds(10, 273, 314, 110);
+		cribGroup.setBounds(10, 300, 314, 110);
 		cardTable.add(cribGroup);
 		cribGroup.setLayout(null);
 		
@@ -112,14 +114,14 @@ public class Cribbage extends JFrame {
 		deck1.setLocation(8, 8);
 		cardTable.add(deck1);
 		
-		JLabel lblHand = new JLabel("Hand");
+		lblHand = new JLabel("Hand");
 		lblHand.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblHand.setBounds(334, 152, 97, 30);
+		lblHand.setBounds(10, 123, 97, 30);
 		cardTable.add(lblHand);
 		
-		JLabel lblCrib = new JLabel("Crib");
+		lblCrib = new JLabel("Crib");
 		lblCrib.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblCrib.setBounds(334, 273, 97, 30);
+		lblCrib.setBounds(10, 273, 97, 30);
 		cardTable.add(lblCrib);
 		
 		btnCalculate = new JButton("Calculate");
@@ -227,6 +229,8 @@ public class Cribbage extends JFrame {
 		
 		cutCard = deck1.drawCard();
 		cutCard.setFaceUp(false);
+		cutCard.setCanFlip(false);
+		cutCard.setLocation(this.handGroup.getLocation().x + this.handGroup.getWidth() + 10, this.handGroup.getLocation().y);
 		cardTable.add(cutCard);
 				
 		setControls();

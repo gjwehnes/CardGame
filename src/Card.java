@@ -14,6 +14,7 @@ public class Card extends JLabel{
 	private FaceValue faceValue;
 	private boolean canFlip = true;
 	private boolean faceUp = true;
+	private boolean canDrag = true;
 	private String imageFileName;
 	
 	public final static String RESOURCE_FOLDER = "../CardGame/res";
@@ -141,6 +142,14 @@ public class Card extends JLabel{
 
 	public void setCanFlip(boolean canFlip) {
 		this.canFlip = canFlip;
+	}
+
+	public boolean getCanDrag() {
+		return canDrag;
+	}
+
+	public void setCanDrag(boolean canDrag) {
+		this.canDrag = canDrag;
 	}
 
 	public Container getStartDragOrigin() {

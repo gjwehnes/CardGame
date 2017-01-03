@@ -110,6 +110,11 @@ public class CardTable extends JPanel {
 	private void mousePressedLocal(MouseEvent arg0){
 		System.out.println("CardTable.mousePressedLocal: location = (" + arg0.getXOnScreen() + "," + arg0.getYOnScreen() + ")");
 		Card card = (Card)arg0.getSource();
+		
+		if (card.getCanDrag() == false) {
+			return;
+		}
+		
 		origin = card.getParent();
 		Container parent = card.getParent();
 		
@@ -154,6 +159,11 @@ public class CardTable extends JPanel {
 	private void mouseReleasedLocal(MouseEvent arg0){
 		System.out.println("CardTable.mouseReleasedLocal:");		
 		Card originalCard = (Card)arg0.getSource();
+		
+		if (originalCard.getCanDrag() == false) {
+			return;
+		}
+		
 		//Container parent = card.getParent();
 		isDragging = false;
 		//CardGroup group = null;
@@ -231,9 +241,14 @@ public class CardTable extends JPanel {
 
 	private void mouseDraggedLocal(MouseEvent arg0){
 		System.out.println("CardTable.mouseDraggedLocal: location = (" + arg0.getXOnScreen() + "," + arg0.getYOnScreen() + ")");
+
+		Card card = (Card)arg0.getSource();
+		if (card.getCanDrag() == false) {
+			return;
+		}
+
 		
 		if (isDragging)	{
-			Card card = (Card)arg0.getSource();
 			ArrayList<Card> relatedCards = card.getRelated();
 
 			//calculate difference between EndDrag x,y and StartDrag x,y

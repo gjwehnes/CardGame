@@ -17,8 +17,7 @@ public class Card extends JLabel{
 	private boolean canDrag = true;
 	private String imageFileName;
 	
-	public final static String RESOURCE_FOLDER = "../CardGame/res";
-	public final static String CARD_BACK_NAME = RESOURCE_FOLDER + "/Back.png";
+	public final static String CARD_BACK_NAME = CardTable.RESOURCE_FOLDER + "/Back.png";
 	public final static int CARD_WIDTH = 72;
 	public final static int CARD_HEIGHT = 96;
 
@@ -121,7 +120,7 @@ public class Card extends JLabel{
 	public void setFaceUp(boolean faceUp) {
 		this.faceUp = faceUp;
 		if (this.faceUp) {
-			this.setIcon(new ImageIcon(RESOURCE_FOLDER + "/" + imageFileName + ".png"));
+			this.setIcon(new ImageIcon(CardTable.RESOURCE_FOLDER + "/" + imageFileName + ".png"));
 		}
 		else {
 			this.setIcon(new ImageIcon(CARD_BACK_NAME));

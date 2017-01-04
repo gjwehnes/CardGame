@@ -31,6 +31,7 @@ public class CardTable extends JPanel {
 
 	//TODO
 	//-cannot flip cards while in container
+	protected final static String RESOURCE_FOLDER = "../CardGame/res";
 	
 	private boolean isDragging;
 	private Container origin;
@@ -49,7 +50,7 @@ public class CardTable extends JPanel {
 		this.setName("CardTable1");
 		
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
-		Image image = toolkit.getImage("res/no-drop.png");
+		Image image = toolkit.getImage(RESOURCE_FOLDER + "/no-drop.png");
 		waitCursor = toolkit.createCustomCursor(image , new Point(0,0), "img");
 		
 		mma = new MouseMotionAdapter()

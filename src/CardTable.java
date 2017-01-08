@@ -203,6 +203,9 @@ public class CardTable extends JPanel {
 				originalContainer.add(relatedCard);
 				relatedCard.setLocation(relatedCard.startDragX, relatedCard.startDragY);
 				originalContainer.setComponentZOrder(relatedCard, 0);				
+				if (originalContainer instanceof CardGroup) {
+					((CardGroup)originalContainer).reOrder();
+				}
 			}
 			else {
 			

@@ -13,7 +13,8 @@ import javax.swing.JPanel;
 public class CardGroup extends JPanel  {
 
 	private MouseMotionAdapter mma;
-	private MouseAdapter ma;	
+	private MouseAdapter ma;
+	private boolean canDrop = true;
 
 	private int hSpace = 0;
 	private int vSpace = 0;
@@ -53,6 +54,14 @@ public class CardGroup extends JPanel  {
 	}
 
 	
+	public boolean getCanDrop() {
+		return canDrop;
+	}
+
+	public void setCanDrop(boolean canDrop) {
+		this.canDrop = canDrop;
+	}
+
 	public CardGroup() {
 		super();
 		mma = new MouseMotionAdapter()

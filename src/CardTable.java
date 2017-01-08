@@ -42,7 +42,17 @@ public class CardTable extends JPanel {
 	private Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 	private Cursor defaultCursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
 	private Cursor waitCursor = null;
+	private boolean canDrop = true;
+
 	
+	public boolean getCanAccept() {
+		return canDrop;
+	}
+
+	public void setCanDrop(boolean canDrop) {
+		this.canDrop = canDrop;
+	}
+
 	public CardTable() {
 		this.setBackground(Color.GREEN);
 		this.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -170,7 +180,7 @@ public class CardTable extends JPanel {
 		//CardGroup group = null;
 		//Container destination = parent;
 		
-		boolean vetoed = (fireCardDraggingEvent(originalCard) == false);
+		DragStates dragPermission = fireCardDraggingEvent(originalCard);
 					
 		ArrayList<Card> relatedCards = originalCard.getRelated();
 		if (relatedCards == null) {
@@ -186,7 +196,7 @@ public class CardTable extends JPanel {
 			CardGroup relatedGroup = null;
 			Container relatedDestination = relatedParent;
 
-			if (vetoed) {
+			if (dragPermission == DragStates.DENY) {
 				//return to original location
 				Container originalContainer = relatedCard.getStartDragOrigin();
 				relatedParent.remove(relatedCard);
@@ -267,7 +277,7 @@ public class CardTable extends JPanel {
 			
 			card.setLocation(card.startDragX + xDelta , card.startDragY + yDelta);
 
-			if (fireCardDraggingEvent(card) == true) {
+			if (fireCardDraggingEvent(card) == DragStates.ALLOW) {
 				this.setCursor(handCursor);
 			}
 			else {
@@ -392,12 +402,14 @@ public class CardTable extends JPanel {
 				
 	}
 	
-	private synchronized boolean fireCardDraggingEvent(Card card) {
+	private synchronized DragStates fireCardDraggingEvent(Card card) {
 		
-		boolean vetoed = false;
+		DragStates state = DragStates.ALLOW;
+				
+		//by default, the top-level container is the target
+		Container target = this;
 		
 		//test if within bounds of another container
-		Container target = this;
 		for (Component c : this.getComponents()){
 			if (c instanceof CardGroup){
 				if (isOverlapping(card, (CardGroup)c, 50)) {
@@ -406,12 +418,27 @@ public class CardTable extends JPanel {
 			}
 		}
 		
+		if (target == this) {
+			if (this.getCanAccept() == false) {
+				state = DragStates.DENY;
+			}
+		}
+		else if (target instanceof CardGroup) {
+			if (((CardGroup)target).getCanDrop() == false)  {
+				state = DragStates.DENY;
+			}
+		}
+
 		//now allow all other listeners to respond to event				
 		for (CardTableEventsListener listener : listeners){
-			vetoed = vetoed || listener.handleCardDragging(card, target);
+			DragStates listenerVeto = listener.handleCardDragging(card, target);
+			if (listenerVeto == DragStates.DENY) {
+				state =DragStates.DENY;
+				break;
+			}
 		}
 		
-		return vetoed;
+		return state;
 	}
 
 	private synchronized void fireCardDraggedEvent(Card card) {		
